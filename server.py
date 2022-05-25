@@ -1,16 +1,15 @@
 from sanic import Sanic
 from sanic.response import text
-#from . import config
 
 app = Sanic('myapp')
 
 app.config.DB_NAME = 'appdb'
-app.config['DB_USER'] = 'appuser'
+app.config['DB_USER'] = 'postgres'
 
 db_settings = {
     'DB_HOST': 'localhost',
     'DB_NAME': 'appdb',
-    'DB_USER': 'appuser'
+    'DB_USER': 'postgres'
 }
 
 app.config.update(db_settings)

@@ -13,7 +13,7 @@ def users_query(
     email: Optional[str] = None,
     lang: Optional[UserLang] = None,
 ) -> GinoExecutor:
-    query = User.query.order_by(User.create_datetime.desc())
+    query = User.query
 
     if user_id:
         query = query.where(User.id == user_id)

@@ -1,11 +1,8 @@
-import imp
 from sanic import Sanic
 from sanic.response import text
 from database.models.models import db,User
 import json
 from database import loaders
-
-
 
 app = Sanic('myapp')
 '''

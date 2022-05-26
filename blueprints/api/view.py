@@ -4,7 +4,8 @@ from sanic import Sanic
 from sanic.response import text
 from database import loaders,db,User
 from sanic.response import json, raw
-from utils import validate_email, validate_password
+from utils import validate_email, validate_password, hash_pass, dehash_pass
+
 
 
 blueprint = Blueprint('api', url_prefix='/api', strict_slashes=True)
@@ -24,15 +25,18 @@ async def add_user(request):
     all_users = await loaders.users_query().all()
 
     if validate_email(form['email'][0]) and validate_password(form['password'][0]):
+        password = hash_pass(form['password'][0])
         user = await User.create(
             id = len(all_users)+1,
             email = form['email'][0],
-            password = form['password'][0], 
+            password = password,
             lang = 'RU',
             image = body,
             image_mime_type = type)
     else:
         return json({'status':'400'})
+
+    
     return json(user.to_dict())
 
 

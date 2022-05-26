@@ -1,5 +1,6 @@
 import hashlib
 
+
 def hash_pass(password):
     str = password.encode('utf-8')
     hash_pass = str.hex()

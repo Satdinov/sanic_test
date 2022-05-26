@@ -1,0 +1,31 @@
+[tool.poetry]
+name = "sanic_test"
+version = "0.1.0"
+description = ""
+authors = ["Satdinov <satdinov.rsh@yandex.ru>"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+sanic = {version ="^21.12", extras = ["ext"]}
+gino = "^1.0"
+gino-sanic = {git = "https://github.com/sandlabs/gino-sanic.git", branch = "master"}
+alembic = "^1.6" 
+psycopg2-binary = "^2.8" 
+sanic-ext = "^22.3.1"
+
+[tool.isort]
+line_length = 120
+multi_line_output = 5
+lines_after_imports = 2
+atomic = true
+combine_star = true
+sections = ["FUTURE", "STDLIB", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLDER"]
+skip = [".git", ".env", ".venv", "env", "venv", "node_modules", "alembic"]
+
+[tool.poetry.dev-dependencies]
+prospector = "^1.7.7"
+isort = "^5.10.1"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

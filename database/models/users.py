@@ -1,7 +1,10 @@
-from sqlalchemy.dialects.postgresql import ENUM
-from typing import Dict
 from enum import Enum
+from typing import Dict
+
+from sqlalchemy.dialects.postgresql import ENUM
+
 from .db import db
+
 
 class UserLang(Enum):
     EN = 'EN'
@@ -9,7 +12,7 @@ class UserLang(Enum):
 
 class User(db.Model):
     __tablename__ = 'users'
-    ___hiden_keys__ = ('image')
+    __hiden_keys__ = ('image','password', 'image_mime_type')
     id = db.Column(db.Integer(), primary_key=True)
     email = db.Column(db.String(), default='noname')
     password = db.Column(db.String(), default='noname') #string

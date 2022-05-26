@@ -8,6 +8,7 @@ from typing import Any, Dict
 
 from gino.crud import CRUDModel as _CRUDModel
 
+
 if 'sanic' in sys.modules:
     from gino.ext.sanic import Gino as _Gino  # pylint: disable=import-error
 else:

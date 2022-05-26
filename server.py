@@ -1,6 +1,8 @@
 from sanic import Sanic
-from database import db
+
 from blueprints import api
+from database import db
+
 
 app = Sanic('myapp')
 

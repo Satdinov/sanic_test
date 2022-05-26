@@ -1,5 +1,5 @@
-from .models import db,UserLang,User
 from . import loaders
+from .models import User, UserLang, db
 
 
 __all__ = [

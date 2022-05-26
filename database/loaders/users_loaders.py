@@ -1,10 +1,11 @@
 from datetime import datetime
 from enum import Enum
 from typing import Optional
-from gino.api import GinoExecutor
-from ..models import User,UserLang
+
 from gino import Gino
-from ..models import db
+from gino.api import GinoExecutor
+
+from ..models import User, UserLang, db
 
 
 # поиск по атрибутам в БД

@@ -1,11 +1,8 @@
-from email.mime import image
 from sanic import Blueprint
-from sanic import Sanic
-from sanic.response import text
-from database import loaders,db,User
 from sanic.response import json, raw
-from utils import validate_email, validate_password, hash_pass, dehash_pass
 
+from database import User, loaders
+from utils import dehash_pass, hash_pass, validate_email, validate_password
 
 
 blueprint = Blueprint('api', url_prefix='/api', strict_slashes=True)

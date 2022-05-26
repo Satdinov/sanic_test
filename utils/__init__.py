@@ -1,5 +1,6 @@
+from .hash import dehash_pass, hash_pass
 from .validate import validate_email, validate_password
-from .hash import hash_pass, dehash_pass
+
 
 __all__ = [
     'validate_email'

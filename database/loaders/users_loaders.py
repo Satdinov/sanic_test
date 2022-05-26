@@ -3,13 +3,15 @@ from enum import Enum
 from typing import Optional
 from gino.api import GinoExecutor
 from ..models import User,UserLang
+from gino import Gino
+from ..models import db
 
 def users_query(
     user_id: Optional[str] = None,
     email: Optional[str] = None,
     lang: Optional[UserLang] = None,
 ) -> GinoExecutor:
-    query = User.query.order_by(User.id.desc())
+    query = User.query
 
     if user_id:
         query = query.where(User.id == user_id)

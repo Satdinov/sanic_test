@@ -8,11 +8,11 @@ from typing import Any, Dict
 
 from gino.crud import CRUDModel as _CRUDModel
 
-
 if 'sanic' in sys.modules:
     from gino.ext.sanic import Gino as _Gino  # pylint: disable=import-error
 else:
     from gino import Gino as _Gino
+
 
 
 class CRUDModel(_CRUDModel):
@@ -36,14 +36,6 @@ class CRUDModel(_CRUDModel):
         if isinstance(value, _CRUDModel):
             return value.to_dict()
         return value
-
-    def to_dict(self, del_hiden_keys: bool = True) -> Dict:  # pylint: disable=arguments-differ
-        data = {}
-        for key in list(self.dict.get('values', {}).keys()) + list(self.dict.keys()):
-            if key.startswith('_') or (del_hiden_keys and key in getattr(self, 'hiden_keys', [])):
-                continue
-            data[key] = self._value_serializer(getattr(self, key, None))
-        return data
 
 
 class Gino(_Gino):

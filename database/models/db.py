@@ -37,6 +37,13 @@ class CRUDModel(_CRUDModel):
             return value.to_dict()
         return value
 
+    def to_dict(self, del_hiden_keys: bool = True) -> Dict:  # pylint: disable=arguments-differ
+        data = {}
+        for key in list(self.__dict__.get('values', {}).keys()) + list(self.__dict__.keys()):
+            if key.startswith('_') or (del_hiden_keys and key in getattr(self, 'hiden_keys', [])):
+                continue
+            data[key] = self._value_serializer(getattr(self, key, None))
+        return data
 
 class Gino(_Gino):
     model_base_classes = (CRUDModel,)

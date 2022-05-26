@@ -20,8 +20,8 @@ app.ctx.db = db
 @app.get("/")
 async def hello_world(request):
     all_users = await loaders.users_query().all()
-    return json([str(user.__dict__) for user in all_users])
-    #return json([user.to_dict() for user in all_users])
+    #return json([str(user.__dict__) for user in all_users])
+    return json([user.to_dict() for user in all_users])
 
 
 @app.post("/foo")

@@ -39,8 +39,8 @@ class CRUDModel(_CRUDModel):
 
     def to_dict(self, del_hiden_keys: bool = True) -> Dict:  # pylint: disable=arguments-differ
         data = {}
-        for key in list(self.__dict__.get('values', {}).keys()) + list(self.__dict__.keys()):
-            if key.startswith('_') or (del_hiden_keys and key in getattr(self, 'hiden_keys', [])):
+        for key in list(self.__dict__.get('__values__', {}).keys()) + list(self.__dict__.keys()):
+            if key.startswith('_') or (del_hiden_keys and key in getattr(self, '__hiden_keys__', [])):
                 continue
             data[key] = self._value_serializer(getattr(self, key, None))
         return data

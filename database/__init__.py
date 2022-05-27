@@ -1,10 +1,11 @@
 from . import loaders
-from .models import User, UserLang, db
+from .models import User, UserLang, db, Image
 
 
 __all__ = [
     'User',
     'db',
     'UserLang',
-    'loaders'
+    'loaders',
+    'Image'
 ]

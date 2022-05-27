@@ -1,6 +1,7 @@
-from . import api
+from . import users, image
 
 
 __all__ = [
-    'api'
+    'users',
+    'image'
 ]

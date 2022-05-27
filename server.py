@@ -1,6 +1,7 @@
-from sanic import Sanic
+from sanic import Blueprint, Sanic
 
-from blueprints import api
+from blueprints import users
+import blueprints
 from database import db
 
 
@@ -16,4 +17,9 @@ app.config.DB_DSN = app.config.PG_CONNECTION
 db.init_app(app)
 app.ctx.db = db
 
-app.blueprint(api.blueprint)
+#app.blueprint(users_bp.blueprint) #сделать группу
+app.blueprint(Blueprint.group(
+    blueprints.image.blueprint,
+    blueprints.users.blueprint,
+    #url_prefix=app.config.APP_URL_PREFIX
+))

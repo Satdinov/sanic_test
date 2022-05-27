@@ -12,6 +12,8 @@ gino-sanic = {git = "https://github.com/sandlabs/gino-sanic.git", branch = "mast
 alembic = "^1.6" 
 psycopg2-binary = "^2.8" 
 sanic-ext = "^22.3.1"
+pydantic = "^1.9.1"
+email-validator = "^1.2.1"
 
 [tool.isort]
 line_length = 120

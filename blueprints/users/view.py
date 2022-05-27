@@ -1,7 +1,11 @@
+import imp
 from sanic import Blueprint
 from sanic.response import json, raw
 from sanic_ext import openapi
 
+from utils.openapi_models import ResponseSchema
+
+from .models import AddUserSchema
 from database import User, loaders
 from utils import dehash_pass, hash_pass, validate_email, validate_password
 
@@ -9,14 +13,17 @@ from utils import dehash_pass, hash_pass, validate_email, validate_password
 blueprint = Blueprint('users', url_prefix='/users', strict_slashes=True)
 
 @blueprint.get("/get_users")
-@openapi.summary("This is a summary")
-@openapi.description("This is a description")
+@openapi.summary("Get users")
+@openapi.description("Get users from database")
+@openapi.response(200, {'application/json': ResponseSchema}, description='OK')
+@openapi.response(500, {'application/json': ResponseSchema}, description='Internal Server Error')
 async def get_users(request):
     all_users = await loaders.users_query().all()
     return json([user.to_dict() for user in all_users])
 
 
 @blueprint.post("/add_user")
+@openapi.body({"multipart/form-data": AddUserSchema}, required=True)
 async def add_user(request):
     form = request.form
     all_users = await loaders.users_query().all()
@@ -26,7 +33,7 @@ async def add_user(request):
             id = len(all_users)+1,
             email = form['email'][0],
             password = password,
-            lang = 'RU'
+            lang = form['lang'][0]
         )
     else:
         return json({'status':'400'})

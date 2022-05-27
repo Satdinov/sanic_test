@@ -1,5 +1,6 @@
 from sanic import Blueprint
 from sanic.response import json, raw
+from sanic_ext import openapi
 
 from database import User, loaders
 from utils import dehash_pass, hash_pass, validate_email, validate_password
@@ -8,6 +9,8 @@ from utils import dehash_pass, hash_pass, validate_email, validate_password
 blueprint = Blueprint('users', url_prefix='/users', strict_slashes=True)
 
 @blueprint.get("/get_users")
+@openapi.summary("This is a summary")
+@openapi.description("This is a description")
 async def get_users(request):
     all_users = await loaders.users_query().all()
     return json([user.to_dict() for user in all_users])

@@ -5,7 +5,7 @@ from sanic_ext import openapi
 
 from utils.openapi_models import ResponseSchema
 
-from .models import AddUserSchema
+from .models import AddUserSchema, ChangeEmailSchema
 from database import User, loaders
 from utils import dehash_pass, hash_pass, validate_email, validate_password
 
@@ -43,6 +43,7 @@ async def add_user(request):
 
 
 @blueprint.patch("/change_email/<user_id>")
+@openapi.body({"multipart/form-data": ChangeEmailSchema}, required=True)
 async def change_user(request, user_id):
     form = request.form
     user = await loaders.users_query(user_id=int(user_id)).first()

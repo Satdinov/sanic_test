@@ -1,5 +1,5 @@
 from . import loaders
-from .models import User, UserLang, db, Image
+from .models import User, UserLang, db, Image, UserRole
 
 
 __all__ = [
@@ -7,5 +7,6 @@ __all__ = [
     'db',
     'UserLang',
     'loaders',
-    'Image'
+    'Image',
+    'UserRole'
 ]

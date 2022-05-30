@@ -18,7 +18,7 @@ else:
 class CRUDModel(_CRUDModel):
     hiden_keys = ()
 
-    def _value_serializer(self, value: Any) -> Any:
+    def _value_serializer(self, value: Any) -> Any:  # noqa
         if isinstance(value, uuid.UUID):
             return str(value)
         if isinstance(value, Decimal):
@@ -37,7 +37,7 @@ class CRUDModel(_CRUDModel):
             return value.to_dict()
         return value
 
-    def to_dict(self, del_hiden_keys: bool = True) -> Dict:  # pylint: disable=arguments-differ
+    def to_dict(self, del_hiden_keys: bool = True) -> Dict:
         data = {}
         for key in list(self.__dict__.get('__values__', {}).keys()) + list(self.__dict__.keys()):
             if key.startswith('_') or (del_hiden_keys and key in getattr(self, '__hiden_keys__', [])):

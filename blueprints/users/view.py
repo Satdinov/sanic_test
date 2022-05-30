@@ -21,7 +21,7 @@ blueprint = Blueprint('users', url_prefix='/users', strict_slashes=True)
 @openapi.response(403, {'application/json': AuthErrorSchema}, description='Forbidden')
 @openapi.response(404, {'application/json': ResponseSchema}, description='Not Found')
 @openapi.response(500, {'application/json': ResponseSchema}, description='Internal Server Error')
-async def get_users(request):
+async def get_users(request):  # noqa
     all_users = await loaders.users_query().all()
     return json([user.to_dict() for user in all_users])
 

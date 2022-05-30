@@ -45,6 +45,10 @@ app.blueprint(Blueprint.group(
     # url_prefix=app.config.APP_URL_PREFIX
 ))
 
-register_jwt(app)
-register_password_hasher(app)
-register_redis(app)
+
+def register_extensions(app: Sanic):
+    register_jwt(app)
+    register_password_hasher(app)
+    register_redis(app)
+
+register_extensions(app)

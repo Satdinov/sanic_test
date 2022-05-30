@@ -20,22 +20,21 @@ blueprint = Blueprint('images', url_prefix='/images', strict_slashes=True)
 @openapi.response(404, {'application/json': ResponseSchema}, description='Not Found')
 @openapi.response(500, {'application/json': ResponseSchema}, description='Internal Server Error')
 @openapi.body({"multipart/form-data": AddImageSchema}, required=True)
-async def add_image(request, user_id):
-    await loaders.users_query(user_id=int(user_id)).first_or_404()
-    image = await loaders.image_query(user_id=int(user_id)).first()
+async def add_image(request, user_id):  # noqa
+    user = await loaders.users_query(user_id=int(user_id)).first_or_404()
+    image = await loaders.image_query(user_id=user.id).first()
     file = request.files['image'][0]
-    body = file.body
-    type = file.type
+
     if not image:
         await Image.create(
             user_id=int(user_id),
-            image=body,
-            image_mime_type=type)
+            image=file.body,
+            image_mime_type=file.type)
 
     else:
         await image.update(
-            image=body,
-            image_mime_type=type
+            image=file.body,
+            image_mime_type=file.type
         ).apply()
     return json({'status': 200})
 

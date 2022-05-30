@@ -7,7 +7,6 @@ from gino.api import GinoExecutor
 
 from ..models import Image
 
-
 # поиск по атрибутам в БД
 def image_query(
     user_id_im: Optional[str] = None,
@@ -17,6 +16,5 @@ def image_query(
 
     if user_id_im:
         query = query.where(Image.user_id == user_id_im)
-
 
     return query.gino

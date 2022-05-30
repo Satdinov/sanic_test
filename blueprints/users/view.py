@@ -4,7 +4,7 @@ from sanic_ext import openapi, validate
 from sanic_jwt.decorators import inject_user, protected, scoped
 
 from database import User, loaders, UserRole
-from utils import PasswordHasher, validate_email, validate_password
+from utils import PasswordHasher
 from utils.openapi_models import ResponseSchema, UserSchema, AuthErrorSchema
 
 from .models import AddUserModel, AddUserSchema, ChangeEmailSchema
@@ -43,7 +43,7 @@ async def get_users(request):  # pylint: disable=unused-argument
 async def add_user(request, body):  # pylint: disable=unused-argument
     body.email = body.email.lower()
     user = await loaders.users_query(email=body.email).first()
-    if validate_email(body.email) and validate_password(body.password) and not user:
+    if not user:
         password_hasher = PasswordHasher()
         password = await password_hasher.async_hash(body.password)
         user = await User.create(
@@ -68,8 +68,11 @@ async def add_user(request, body):  # pylint: disable=unused-argument
 @openapi.response(500, {'application/json': ResponseSchema}, description='Internal Server Error')
 @openapi.body({"application/json": ChangeEmailSchema}, required=True)
 @protected()
+@inject_user()
 @scoped((UserRole.Admin.value, UserRole.User.value,), require_all=False)
-async def change_user(request, user_id):
+async def change_user(request, user_id, user:User):
+    if user.role != UserRole.Admin.value:
+        user_id = str(user.id)
     form = request.form
     user = await loaders.users_query(user_id=int(user_id)).first_or_404()
     await user.update(email=form['email'][0]).apply()
@@ -87,7 +90,10 @@ async def change_user(request, user_id):
 @openapi.response(500, {'application/json': ResponseSchema}, description='Internal Server Error')
 @protected()
 @scoped((UserRole.Admin.value, UserRole.User.value,), require_all=False)
-async def delete_user(request, user_id):  # pylint: disable=unused-argument
+@inject_user()
+async def delete_user(request, user_id, user:User):  # pylint: disable=unused-argument
+    if user.role != UserRole.Admin.value:
+        user_id = str(user.id)
     user = await loaders.users_query(user_id=int(user_id)).first_or_404()
     await user.delete()
     return json({'status': '200'})
@@ -103,7 +109,10 @@ async def delete_user(request, user_id):  # pylint: disable=unused-argument
 @openapi.response(404, {'application/json': ResponseSchema}, description='Not Found')
 @openapi.response(500, {'application/json': ResponseSchema}, description='Internal Server Error')
 @protected()
+@inject_user()
 @scoped((UserRole.Admin.value, UserRole.User.value,), require_all=False)
-async def get_user(request, user_id):  # pylint: disable=unused-argument
+async def get_user(request, user_id, user:User):  # pylint: disable=unused-argument
+    if user.role != UserRole.Admin.value:
+        user_id = str(user.id)
     user = await loaders.users_query(user_id=int(user_id)).first_or_404()
     return json(user.to_dict())

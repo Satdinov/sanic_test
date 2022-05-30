@@ -1,11 +1,8 @@
-from datetime import datetime
-from enum import Enum
 from typing import Optional
 
-from gino import Gino
 from gino.api import GinoExecutor
 
-from ..models import User, UserLang, db
+from ..models import User, UserLang
 
 
 # поиск по атрибутам в БД
@@ -13,7 +10,6 @@ def users_query(
     user_id: Optional[str] = None,
     email: Optional[str] = None,
     lang: Optional[UserLang] = None,
-    is_deleted: bool = None,
 ) -> GinoExecutor:
 
     query = User.query
@@ -26,6 +22,4 @@ def users_query(
 
     if lang:
         query = query.where(User.lang == lang)
-
-
     return query.gino

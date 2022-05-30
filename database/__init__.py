@@ -1,5 +1,5 @@
 from . import loaders
-from .models import User, UserLang, db, Image, UserRole
+from .models import Image, User, UserLang, UserRole, db
 
 
 __all__ = [

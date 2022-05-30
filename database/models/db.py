@@ -15,7 +15,6 @@ else:
     from gino import Gino as _Gino
 
 
-
 class CRUDModel(_CRUDModel):
     hiden_keys = ()
 
@@ -46,7 +45,9 @@ class CRUDModel(_CRUDModel):
             data[key] = self._value_serializer(getattr(self, key, None))
         return data
 
+
 class Gino(_Gino):
     model_base_classes = (CRUDModel,)
+
 
 db = Gino()

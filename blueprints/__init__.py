@@ -1,7 +1,7 @@
-from . import users, image
+from . import images, users
 
 
 __all__ = [
     'users',
-    'image'
+    'images'
 ]

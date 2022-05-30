@@ -1,6 +1,6 @@
 from .db import db
+from .images import Image
 from .users import User, UserLang, UserRole
-from .image_data import Image
 
 
 __all__ = [

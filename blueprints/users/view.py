@@ -21,7 +21,7 @@ blueprint = Blueprint('users', url_prefix='/users', strict_slashes=True)
 @openapi.response(403, {'application/json': AuthErrorSchema}, description='Forbidden')
 @openapi.response(404, {'application/json': ResponseSchema}, description='Not Found')
 @openapi.response(500, {'application/json': ResponseSchema}, description='Internal Server Error')
-async def get_users(request):  # noqa
+async def get_users(request):  # pylint: disable=unused-argument
     all_users = await loaders.users_query().all()
     return json([user.to_dict() for user in all_users])
 
@@ -37,7 +37,8 @@ async def get_users(request):  # noqa
 @openapi.response(500, {'application/json': ResponseSchema}, description='Internal Server Error')
 @openapi.body({"application/json": AddUserSchema}, required=True)
 @validate(json=AddUserModel)
-async def add_user(body):
+async def add_user(request, body):  # pylint: disable=unused-argument
+    body.email = body.email.lower()
     user = await loaders.users_query(email=body.email).first()
     if validate_email(body.email) and validate_password(body.password) and not user:
         password_hasher = PasswordHasher()
@@ -79,7 +80,7 @@ async def change_user(request, user_id):
 @openapi.response(403, {'application/json': AuthErrorSchema}, description='Forbidden')
 @openapi.response(404, {'application/json': ResponseSchema}, description='Not Found')
 @openapi.response(500, {'application/json': ResponseSchema}, description='Internal Server Error')
-async def delete_user(user_id):
+async def delete_user(request, user_id):  # pylint: disable=unused-argument
     user = await loaders.users_query(user_id=int(user_id)).first_or_404()
     await user.delete()
     return json({'status': '200'})
@@ -94,6 +95,6 @@ async def delete_user(user_id):
 @openapi.response(403, {'application/json': AuthErrorSchema}, description='Forbidden')
 @openapi.response(404, {'application/json': ResponseSchema}, description='Not Found')
 @openapi.response(500, {'application/json': ResponseSchema}, description='Internal Server Error')
-async def get_user(user_id):
+async def get_user(request, user_id):  # pylint: disable=unused-argument
     user = await loaders.users_query(user_id=int(user_id)).first_or_404()
     return json(user.to_dict())

@@ -1,8 +1,9 @@
 from sanic import Blueprint
 from sanic.response import json
 from sanic_ext import openapi, validate
+from sanic_jwt.decorators import inject_user, protected, scoped
 
-from database import User, loaders
+from database import User, loaders, UserRole
 from utils import PasswordHasher, validate_email, validate_password
 from utils.openapi_models import ResponseSchema, UserSchema, AuthErrorSchema
 
@@ -21,6 +22,7 @@ blueprint = Blueprint('users', url_prefix='/users', strict_slashes=True)
 @openapi.response(403, {'application/json': AuthErrorSchema}, description='Forbidden')
 @openapi.response(404, {'application/json': ResponseSchema}, description='Not Found')
 @openapi.response(500, {'application/json': ResponseSchema}, description='Internal Server Error')
+@scoped((UserRole.Admin.value, ), require_all=False)
 async def get_users(request):  # pylint: disable=unused-argument
     all_users = await loaders.users_query().all()
     return json([user.to_dict() for user in all_users])
@@ -36,6 +38,7 @@ async def get_users(request):  # pylint: disable=unused-argument
 @openapi.response(404, {'application/json': ResponseSchema}, description='Not Found')
 @openapi.response(500, {'application/json': ResponseSchema}, description='Internal Server Error')
 @openapi.body({"application/json": AddUserSchema}, required=True)
+@protected()
 @validate(json=AddUserModel)
 async def add_user(request, body):  # pylint: disable=unused-argument
     body.email = body.email.lower()

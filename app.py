@@ -35,10 +35,12 @@ app = Sanic(Config.APP_NAME)
 app.config.load(Config)
 app.config.load_environment_vars()
 
+
 def register_db(app: Sanic):
     app.config.DB_DSN = app.config.PG_CONNECTION
     db.init_app(app)
     app.ctx.db = db
+
 
 def register_blueprints(app: Sanic):
     app.blueprint(Blueprint.group(
@@ -53,5 +55,6 @@ def register_extensions(app: Sanic):
     register_redis(app)
     register_blueprints(app)
     register_db(app)
+
 
 register_extensions(app)

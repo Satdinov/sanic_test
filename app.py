@@ -39,11 +39,11 @@ app.config.DB_DSN = app.config.PG_CONNECTION
 db.init_app(app)
 app.ctx.db = db
 
-app.blueprint(Blueprint.group(
-    blueprints.images.blueprint,
-    blueprints.users.blueprint,
-    # url_prefix=app.config.APP_URL_PREFIX
-))
+def register_blueprints(app: Sanic):
+    app.blueprint(Blueprint.group(
+        blueprints.images.blueprint,
+        blueprints.users.blueprint,
+    ))
 
 
 def register_extensions(app: Sanic):

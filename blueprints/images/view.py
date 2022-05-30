@@ -1,8 +1,9 @@
 from sanic import Blueprint
 from sanic.response import json, raw
 from sanic_ext import openapi
+from sanic_jwt.decorators import inject_user, protected, scoped
 
-from database import Image, loaders
+from database import Image, loaders, UserRole
 from utils.openapi_models import ResponseSchema, AuthErrorSchema, UserSchema
 from .models import AddImageSchema
 
@@ -20,6 +21,7 @@ blueprint = Blueprint('images', url_prefix='/images', strict_slashes=True)
 @openapi.response(404, {'application/json': ResponseSchema}, description='Not Found')
 @openapi.response(500, {'application/json': ResponseSchema}, description='Internal Server Error')
 @openapi.body({"multipart/form-data": AddImageSchema}, required=True)
+@scoped((UserRole.Admin.value, ), require_all=False)
 async def add_image(request, user_id):
     user = await loaders.users_query(user_id=int(user_id)).first_or_404()
     image = await loaders.image_query(user_id=user.id).first()
@@ -48,6 +50,7 @@ async def add_image(request, user_id):
 @openapi.response(403, {'application/json': AuthErrorSchema}, description='Forbidden')
 @openapi.response(404, {'application/json': ResponseSchema}, description='Not Found')
 @openapi.response(500, {'application/json': ResponseSchema}, description='Internal Server Error')
+@protected()
 async def get_image(request, user_id):  # pylint: disable=unused-argument
     image = await loaders.image_query(user_id=int(user_id)).first_or_404()
     return raw(image.image, content_type=image.image_mime_type)

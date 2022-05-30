@@ -67,6 +67,7 @@ async def add_user(request, body):  # pylint: disable=unused-argument
 @openapi.response(404, {'application/json': ResponseSchema}, description='Not Found')
 @openapi.response(500, {'application/json': ResponseSchema}, description='Internal Server Error')
 @openapi.body({"application/json": ChangeEmailSchema}, required=True)
+@protected()
 async def change_user(request, user_id):
     form = request.form
     user = await loaders.users_query(user_id=int(user_id)).first_or_404()
@@ -83,6 +84,7 @@ async def change_user(request, user_id):
 @openapi.response(403, {'application/json': AuthErrorSchema}, description='Forbidden')
 @openapi.response(404, {'application/json': ResponseSchema}, description='Not Found')
 @openapi.response(500, {'application/json': ResponseSchema}, description='Internal Server Error')
+@protected()
 async def delete_user(request, user_id):  # pylint: disable=unused-argument
     user = await loaders.users_query(user_id=int(user_id)).first_or_404()
     await user.delete()
@@ -98,6 +100,7 @@ async def delete_user(request, user_id):  # pylint: disable=unused-argument
 @openapi.response(403, {'application/json': AuthErrorSchema}, description='Forbidden')
 @openapi.response(404, {'application/json': ResponseSchema}, description='Not Found')
 @openapi.response(500, {'application/json': ResponseSchema}, description='Internal Server Error')
+@protected()
 async def get_user(request, user_id):  # pylint: disable=unused-argument
     user = await loaders.users_query(user_id=int(user_id)).first_or_404()
     return json(user.to_dict())

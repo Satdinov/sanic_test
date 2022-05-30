@@ -21,7 +21,8 @@ blueprint = Blueprint('images', url_prefix='/images', strict_slashes=True)
 @openapi.response(404, {'application/json': ResponseSchema}, description='Not Found')
 @openapi.response(500, {'application/json': ResponseSchema}, description='Internal Server Error')
 @openapi.body({"multipart/form-data": AddImageSchema}, required=True)
-@scoped((UserRole.Admin.value, ), require_all=False)
+@protected()
+@scoped((UserRole.Admin.value, UserRole.User.value,), require_all=False)
 async def add_image(request, user_id):
     user = await loaders.users_query(user_id=int(user_id)).first_or_404()
     image = await loaders.image_query(user_id=user.id).first()
@@ -51,6 +52,7 @@ async def add_image(request, user_id):
 @openapi.response(404, {'application/json': ResponseSchema}, description='Not Found')
 @openapi.response(500, {'application/json': ResponseSchema}, description='Internal Server Error')
 @protected()
+@scoped((UserRole.Admin.value, UserRole.User.value,), require_all=False)
 async def get_image(request, user_id):  # pylint: disable=unused-argument
     image = await loaders.image_query(user_id=int(user_id)).first_or_404()
     return raw(image.image, content_type=image.image_mime_type)

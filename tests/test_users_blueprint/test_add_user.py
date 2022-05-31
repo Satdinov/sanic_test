@@ -1,6 +1,6 @@
 import pytest
 from sanic import Sanic
-
+import asyncio
 from database import User, UserRole
 
 @pytest.mark.asyncio

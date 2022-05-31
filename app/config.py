@@ -12,6 +12,7 @@ class Config:
     CORS_SUPPORTS_CREDENTIALS: bool = True
     CORS_ORIGINS: str = '.*'
     APP_URL_PREFIX: str = '/api'
+    TESTS: bool = False
     CORS_ALLOW_HEADERS: Tuple[str] = (
         'accept',
         'accept-encoding',

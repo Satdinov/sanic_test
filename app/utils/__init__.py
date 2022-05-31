@@ -1,4 +1,4 @@
-from .password_hasher import PasswordHasher, ResponseSchema
+from .password_hasher import PasswordHasher
 
 
 __all__ = [

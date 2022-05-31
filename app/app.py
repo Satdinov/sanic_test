@@ -3,9 +3,9 @@ from sanic import Blueprint, Sanic
 
 from . import blueprints
 from database import db
-from utils import jwt, password_hasher
+from app.utils import jwt, password_hasher
 
-from config import Config
+from .config import Config
 
 
 def register_jwt(app: Sanic):

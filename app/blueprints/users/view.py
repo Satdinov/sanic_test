@@ -5,8 +5,8 @@ from sanic_jwt.decorators import inject_user, protected, scoped
 
 from sanic.exceptions import InvalidUsage
 from database import User, loaders, UserRole
-from utils import PasswordHasher
-from utils.openapi_models import ResponseSchema, UserSchema, AuthErrorSchema
+from app.utils import PasswordHasher
+from app.utils.openapi_models import ResponseSchema, UserSchema, AuthErrorSchema
 
 from .models import AddUserModel, AddUserSchema, ChangeEmailSchema
 

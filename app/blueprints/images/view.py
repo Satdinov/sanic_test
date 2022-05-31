@@ -4,7 +4,7 @@ from sanic_ext import openapi
 from sanic_jwt.decorators import inject_user, protected, scoped
 
 from database import User, Image, loaders, UserRole
-from utils.openapi_models import ResponseSchema, AuthErrorSchema, UserSchema
+from app.utils.openapi_models import ResponseSchema, AuthErrorSchema, UserSchema
 from .models import AddImageSchema
 
 

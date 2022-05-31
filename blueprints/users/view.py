@@ -3,6 +3,7 @@ from sanic.response import json
 from sanic_ext import openapi, validate
 from sanic_jwt.decorators import inject_user, protected, scoped
 
+from sanic.exceptions import InvalidUsage
 from database import User, loaders, UserRole
 from utils import PasswordHasher
 from utils.openapi_models import ResponseSchema, UserSchema, AuthErrorSchema
@@ -38,11 +39,16 @@ async def get_users(request):  # pylint: disable=unused-argument
 @openapi.response(403, {'application/json': AuthErrorSchema}, description='Forbidden')
 @openapi.response(404, {'application/json': ResponseSchema}, description='Not Found')
 @openapi.response(500, {'application/json': ResponseSchema}, description='Internal Server Error')
+@openapi.parameter('user_id', UserSchema.id, 'path', required=True, allowEmptyValue=False)
 @openapi.body({"application/json": AddUserSchema}, required=True)
 @validate(json=AddUserModel)
 async def add_user(request, body):  # pylint: disable=unused-argument
     body.email = body.email.lower()
     user = await loaders.users_query(email=body.email).first()
+
+    if user:
+        raise InvalidUsage('Email already exists')
+
     if not user:
         password_hasher = PasswordHasher()
         password = await password_hasher.async_hash(body.password)
@@ -52,8 +58,6 @@ async def add_user(request, body):  # pylint: disable=unused-argument
             lang=body.lang,
             role=body.role
         )
-    else:
-        return json({'status': '400'})
     return json(user.to_dict())
 
 
@@ -70,7 +74,7 @@ async def add_user(request, body):  # pylint: disable=unused-argument
 @protected()
 @inject_user()
 @scoped((UserRole.Admin.value, UserRole.User.value,), require_all=False)
-async def change_user(request, user_id, user:User):
+async def change_user(request, user_id, user: User):
     if user.role != UserRole.Admin.value:
         user_id = str(user.id)
     form = request.form
@@ -79,7 +83,8 @@ async def change_user(request, user_id, user:User):
     return json(user.to_dict())
 
 
-@blueprint.delete("/delete_user/<user_id>")
+#@blueprint.delete("/delete_user/<user_id>")
+@blueprint.delete("/delete_user/<user_id:int>")
 @openapi.summary("Delete user")
 @openapi.description("Delete user from database")
 @openapi.response(200, {'application/json': UserSchema}, description='OK')
@@ -91,7 +96,7 @@ async def change_user(request, user_id, user:User):
 @protected()
 @scoped((UserRole.Admin.value, UserRole.User.value,), require_all=False)
 @inject_user()
-async def delete_user(request, user_id, user:User):  # pylint: disable=unused-argument
+async def delete_user(request, user_id, user: User):  # pylint: disable=unused-argument
     if user.role != UserRole.Admin.value:
         user_id = str(user.id)
     user = await loaders.users_query(user_id=int(user_id)).first_or_404()
@@ -111,7 +116,7 @@ async def delete_user(request, user_id, user:User):  # pylint: disable=unused-ar
 @protected()
 @inject_user()
 @scoped((UserRole.Admin.value, UserRole.User.value,), require_all=False)
-async def get_user(request, user_id, user:User):  # pylint: disable=unused-argument
+async def get_user(request, user_id, user: User):  # pylint: disable=unused-argument
     if user.role != UserRole.Admin.value:
         user_id = str(user.id)
     user = await loaders.users_query(user_id=int(user_id)).first_or_404()

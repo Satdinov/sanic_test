@@ -24,7 +24,7 @@ blueprint = Blueprint('images', url_prefix='/images', strict_slashes=True)
 @protected()
 @inject_user()
 @scoped((UserRole.Admin.value, UserRole.User.value,), require_all=False)
-async def add_image(request, user_id, user:User):
+async def add_image(request, user_id, user: User):
     if user.role != UserRole.Admin.value:
         user_id = str(user.id)
     user = await loaders.users_query(user_id=int(user_id)).first_or_404()
@@ -57,7 +57,7 @@ async def add_image(request, user_id, user:User):
 @protected()
 @inject_user()
 @scoped((UserRole.Admin.value, UserRole.User.value,), require_all=False)
-async def get_image(request, user_id, user:User):  # pylint: disable=unused-argument
+async def get_image(request, user_id, user: User):  # pylint: disable=unused-argument
     if user.role != UserRole.Admin.value:
         user_id = str(user.id)
     image = await loaders.image_query(user_id=int(user_id)).first_or_404()

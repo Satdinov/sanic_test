@@ -11,10 +11,11 @@ from pytest_postgresql.janitor import DatabaseJanitor
 from sanic import Sanic
 from sanic_testing import TestManager
 from sqlalchemy.engine.url import make_url
+from sanic import Sanic
 
 from app.app import create_app
 from app.config import Config
-from app.extensions import register_jwt, register_password_hasher
+from app.app import register_jwt, register_password_hasher
 from database import User, UserRole, db
 
 
@@ -103,11 +104,6 @@ def invalid_logins() -> Tuple[str]:
 
 @pytest.fixture
 def invalid_passwords() -> Tuple[str]:
-    return ('invalid', '1234', 1234, True, False, None)
-
-
-@pytest.fixture
-def invalid_otps() -> Tuple[str]:
     return ('invalid', '1234', 1234, True, False, None)
 
 

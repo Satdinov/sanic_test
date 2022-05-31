@@ -5,7 +5,7 @@ from . import blueprints
 from database import db
 from app.utils import jwt, password_hasher
 
-from .config import Config
+from . import config
 
 
 def register_jwt(app: Sanic):
@@ -63,6 +63,3 @@ def register_extensions(app: Sanic):
     register_redis(app)
     register_blueprints(app)
     register_db(app)
-
-
-register_extensions(app)

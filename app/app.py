@@ -1,7 +1,7 @@
 import aioredis
 from sanic import Blueprint, Sanic
 
-import blueprints
+from . import blueprints
 from database import db
 from utils import jwt, password_hasher
 
@@ -29,12 +29,20 @@ def register_redis(app: Sanic):
     app.register_listener(create_redis_connection, 'before_server_start')
     app.register_listener(close_redis_connection, 'before_server_stop')
 
-
+''''
 app = Sanic(Config.APP_NAME)
 
 app.config.load(Config)
 app.config.load_environment_vars()
-
+'''
+def create_app(config_object: object = config.Config, need_register_extensions: bool = True) -> Sanic:
+    app = Sanic(config_object.APP_NAME)
+    app.config.load(config_object)
+    app.config.load_environment_vars()
+    if need_register_extensions:
+        register_extensions(app)
+    register_blueprints(app)
+    return app
 
 def register_db(app: Sanic):
     app.config.DB_DSN = app.config.PG_CONNECTION

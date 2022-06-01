@@ -5,8 +5,8 @@ from database import User, UserRole
 
 @pytest.mark.asyncio
 async def test_add_user_admin(app: Sanic):
-    _, response = await app.asgi_client.post('/api/users/add_user', json={
-                                                                        'email': 'test',
-                                                                        'password': await app.ctx.password_hasher.async_hash('password'),
+    _, response = await app.asgi_client.post('users/add_user', json={
+                                                                        'email': 'test@test.ru',
+                                                                        'password': await app.ctx.password_hasher.async_hash('Password1332'),
                                                                         'role': UserRole.USER.value })
     assert response.status == 200

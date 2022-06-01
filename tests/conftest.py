@@ -473,4 +473,5 @@ async def user_support_ticket(database: Gino, user: User) -> SupportTicket:
 async def test_db_alembic_config() -> AlembicConfig:
     config = AlembicConfig()
 
-    return'''
+    return
+'''

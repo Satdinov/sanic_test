@@ -1,3 +1,4 @@
+from json import dumps
 from sanic import Blueprint, Sanic
 from sanic.response import json, raw
 from sanic_ext import openapi
@@ -37,10 +38,10 @@ async def add_image(request, user_id, user: User):
     image = await loaders.image_query(user_id=user.id).first()
     file = request.files['image'][0]
 
-    image_data = {"image_bytes": 'adf'}
+    image_data = {"image_bytes": image.image}
 
     await request.app.ctx.image_exchange.publish(
-        aio_pika.Message(body=image_data),
+        aio_pika.Message(body=image.image),
         routing_key=request.app.config.IMAGE_EXCHANGE,
     )
 
@@ -84,4 +85,3 @@ async def create_images_exchange(app: Sanic, _):
         app.ctx.image_exchange = await app.ctx.amqp_channel.declare_exchange(
             name=app.config.IMAGE_EXCHANGE, type=ExchangeType.FANOUT, durable=True
         )
-

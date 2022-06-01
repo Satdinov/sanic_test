@@ -1,8 +1,9 @@
 from typing import Tuple
-
+import os
 
 app_name = 'sanic_test'
-
+app_dir = os.path.abspath(os.path.dirname(__file__))
+project_root = os.path.abspath(os.path.join(app_dir, os.pardir))
 
 class Config:
     APP_NAME: str = app_name
@@ -36,4 +37,6 @@ class Config:
     SANIC_JWT_EXPIRATION_DELTA: int = 7 * 24 * 60 * 60
     SANIC_JWT_USER_ID: str = 'id'
     SANIC_JWT_REFRESH_TOKEN_ENABLED: bool = False
-    IMAGE_EXCHANGE: str = 'metaferma.image'
+    IMAGE_EXCHANGE: str = 'IMAGE_EXCHANGE'
+    ALEMBIC_INI_PATH: str = os.path.join(project_root, 'database', 'alembic.ini')
+    ALEMBIC_SCRIPTS_PATH: str = os.path.join(project_root, 'database', 'alembic')

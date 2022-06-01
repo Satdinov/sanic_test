@@ -1,36 +1,53 @@
 import asyncio
+from aio_pika import ExchangeType
 import aio_pika
-import aio_pika.abc
+import PIL
+from PIL import Image
+import os
+import io
+
+async def process_message(
+    message: aio_pika.abc.AbstractIncomingMessage,
+) -> None:
+    async with message.process():
+        #print(message.body)
+        image = Image.open(io.BytesIO(message.body))
+        image.save('image.png')
+        await asyncio.sleep(1)
 
 
-async def main(loop):
+async def main() -> None:
     connection = await aio_pika.connect_robust(
-        "amqp://guest:guest@127.0.0.1/", loop=loop
+        "amqp://guest:guest@127.0.0.1/",
     )
 
-    async with connection:
-        queue_name = "test_queue"
+    queue_name = "IMAGE_EXCHANGE"  # Твое название exchange 
 
-        # Creating channel
-        channel: aio_pika.abc.AbstractChannel = await connection.channel()
+    # Creating channel
+    channel = await connection.channel()
 
-        # Declaring queue
-        queue: aio_pika.abc.AbstractQueue = await channel.declare_queue(
-            queue_name,
-            auto_delete=True
-        )
+    # Declaring queue
+    input_exchange = await channel.declare_exchange(
+        name=queue_name,  # Твое название exchange 
+        type=ExchangeType.FANOUT,
+        durable=True
+    )
+        
+    output_queue = await channel.declare_queue(
+        name=queue_name,  # Твое название exchange
+        durable=True
+    )
 
-        async with queue.iterator() as queue_iter:
-            # Cancel consuming after __aexit__
-            async for message in queue_iter:
-                async with message.process():
-                    print(message.body)
+    await channel.set_qos(prefetch_count=100)
+    await output_queue.bind(input_exchange)
+    await output_queue.consume(process_message)
 
-                    if queue.name in message.body.decode():
-                        break
+    try:
+        # Wait until terminate
+        await asyncio.Future()
+    finally:
+        await connection.close()
 
 
 if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main(loop))
-    loop.close()
+    asyncio.run(main())

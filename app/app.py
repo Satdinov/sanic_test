@@ -63,3 +63,9 @@ def register_extensions(app: Sanic):
     register_redis(app)
     register_blueprints(app)
     register_db(app)
+
+def register_rabbitmq(app: Sanic):
+    async def create_amqp_connection(app: Sanic, _):
+        app.ctx.amqp = await aio_pika.connect_robust(app.config.AMQP_CONNECTION)
+        app.ctx.amqp_channel = await app.ctx.amqp.channel()
+        app.register_listener(create_amqp_connection, 'before_server_start')

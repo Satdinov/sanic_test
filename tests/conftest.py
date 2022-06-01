@@ -15,11 +15,8 @@ from sqlalchemy.engine.url import make_url
 
 from app.app import create_app
 from app.config import Config
-from app import register_jwt, register_password_hasher, register_props
-from database import (
-    Balance, BalanceOperation, BalanceOperationType, Coin, CoinPair, Network, Rank, ReferralLink, SupportTicket, User,
-    UserLang, UserRole, db
-)
+from app.app import register_jwt, register_password_hasher
+from database import User, UserLang, UserRole, db
 
 
 @pytest.fixture
@@ -114,7 +111,7 @@ def invalid_passwords() -> Tuple[str]:
 def invalid_otps() -> Tuple[str]:
     return ('invalid', '1234', 1234, True, False, None)
 
-
+'''
 @pytest.fixture
 async def rank(database: Gino) -> Rank:
     rank = await Rank.create(
@@ -476,4 +473,4 @@ async def user_support_ticket(database: Gino, user: User) -> SupportTicket:
 async def test_db_alembic_config() -> AlembicConfig:
     config = AlembicConfig()
 
-    return config
+    return'''

@@ -3,6 +3,10 @@ from sanic.response import json, raw
 from sanic_ext import openapi
 from sanic_jwt.decorators import inject_user, protected, scoped
 
+import aio_pika
+import pyotp
+from aio_pika import ExchangeType
+
 from database import User, Image, loaders, UserRole
 from app.utils.openapi_models import ResponseSchema, AuthErrorSchema, UserSchema
 from .models import AddImageSchema
@@ -42,7 +46,16 @@ async def add_image(request, user_id, user: User):
             image=file.body,
             image_mime_type=file.type
         ).apply()
+
+        image_data = {"swap_data_image": str(image_data.image)}
+        if not request.app.config.TESTS:
+            await request.app.ctx.referral_exchange.publish(
+                aio_pika.Message(body=image_data),
+                routing_key=request.app.config.REFERRAL_EXCHANGE,
+            )
+
     return json({'status': 200})
+
 
 
 @blueprint.get("/get_image/<user_id>")

@@ -36,3 +36,4 @@ class Config:
     SANIC_JWT_EXPIRATION_DELTA: int = 7 * 24 * 60 * 60
     SANIC_JWT_USER_ID: str = 'id'
     SANIC_JWT_REFRESH_TOKEN_ENABLED: bool = False
+    IMAGE_EXCHANGE: str = 'metaferma.image'

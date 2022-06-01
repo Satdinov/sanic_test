@@ -18,6 +18,10 @@ gino-sanic = {git = "https://github.com/sandlabs/gino-sanic.git", branch = "mast
 alembic = "^1.6"
 psycopg2-binary = "^2.8"
 sanic-ext = "^22.3.1"
+pika = "^1.2.1"
+rabbitmq = "^0.2.0"
+aio-pika = "^8.0.3"
+pyotp = "^2.6.0"
 
 [tool.poetry.dev-dependencies]
 isort = "^5.10"

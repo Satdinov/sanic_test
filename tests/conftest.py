@@ -108,8 +108,41 @@ def invalid_passwords() -> Tuple[str]:
 
 
 @pytest.fixture
-def invalid_otps() -> Tuple[str]:
-    return ('invalid', '1234', 1234, True, False, None)
+async def user(app: Sanic, database: Gino, password: str, hashed_password: str) -> User:
+    async with app.ctx.db.transaction():
+        user = await User.create(
+            role=UserRole.USER,
+            lang=UserLang.EN,
+            email='user@user.com',
+            password=hashed_password,
+            image=b'image',
+            image_mime_type='image/png'
+        )
+        user._raw_password = password
+        # user.total_usd_deposit = await user.usd_deposit()
+        # user.total_week_usd_withdraw = await user.week_usd_withdraw()
+    yield user
+
+    await user.delete()
+
+@pytest.fixture
+async def admin(app: Sanic, database: Gino, password: str) -> User:
+    async with app.ctx.db.transaction():
+        user = await User.create(
+            role=UserRole.ADMIN,
+            lang=UserLang.EN,
+            email='admin@admin.com',
+            password=hashed_password,
+            image=b'image',
+            image_mime_type='image/png'
+        )
+        user._raw_password = password
+        # user.total_usd_deposit = await user.usd_deposit()
+        # user.total_week_usd_withdraw = await user.week_usd_withdraw()
+
+    yield user
+
+    await user.delete()
 
 '''
 @pytest.fixture

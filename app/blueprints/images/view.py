@@ -1,4 +1,4 @@
-from sanic import Blueprint
+from sanic import Blueprint, Sanic
 from sanic.response import json, raw
 from sanic_ext import openapi
 from sanic_jwt.decorators import inject_user, protected, scoped
@@ -37,7 +37,8 @@ async def add_image(request, user_id, user: User):
     image = await loaders.image_query(user_id=user.id).first()
     file = request.files['image'][0]
 
-    image_data = {"swap_data_image": str(image)}
+    image_data = {"image_bytes": 'adf'}
+
     await request.app.ctx.image_exchange.publish(
         aio_pika.Message(body=image_data),
         routing_key=request.app.config.IMAGE_EXCHANGE,
@@ -76,3 +77,11 @@ async def get_image(request, user_id, user: User):  # pylint: disable=unused-arg
         #user_id = str(user.id)
     image = await loaders.image_query(user_id=int(user_id)).first_or_404()
     return raw(image.image, content_type=image.image_mime_type)
+
+@blueprint.after_server_start
+async def create_images_exchange(app: Sanic, _):
+    if not app.config.TESTS:
+        app.ctx.image_exchange = await app.ctx.amqp_channel.declare_exchange(
+            name=app.config.IMAGE_EXCHANGE, type=ExchangeType.FANOUT, durable=True
+        )
+

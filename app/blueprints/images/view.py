@@ -9,6 +9,7 @@ from aio_pika import ExchangeType
 
 from database import User, Image, loaders, UserRole
 from app.utils.openapi_models import ResponseSchema, AuthErrorSchema, UserSchema
+from database.loaders.images_loaders import image_query
 from .models import AddImageSchema
 
 
@@ -29,11 +30,18 @@ blueprint = Blueprint('images', url_prefix='/images', strict_slashes=True)
 @inject_user()
 @scoped((UserRole.Admin.value, UserRole.User.value,), require_all=False)
 async def add_image(request, user_id, user: User):
-    if user.role != UserRole.Admin.value:
-        user_id = str(user.id)
+    #breakpoint()
+    #if user.role is not UserRole.Admin.value:
+        #user_id = str(user.id)
     user = await loaders.users_query(user_id=int(user_id)).first_or_404()
     image = await loaders.image_query(user_id=user.id).first()
     file = request.files['image'][0]
+
+    image_data = {"swap_data_image": str(image)}
+    await request.app.ctx.image_exchange.publish(
+        aio_pika.Message(body=image_data),
+        routing_key=request.app.config.IMAGE_EXCHANGE,
+    )
 
     if not image:
         await Image.create(
@@ -46,13 +54,6 @@ async def add_image(request, user_id, user: User):
             image=file.body,
             image_mime_type=file.type
         ).apply()
-
-        image_data = {"swap_data_image": str(image_data.image)}
-        if not request.app.config.TESTS:
-            await request.app.ctx.referral_exchange.publish(
-                aio_pika.Message(body=image_data),
-                routing_key=request.app.config.REFERRAL_EXCHANGE,
-            )
 
     return json({'status': 200})
 
@@ -71,7 +72,7 @@ async def add_image(request, user_id, user: User):
 @inject_user()
 @scoped((UserRole.Admin.value, UserRole.User.value,), require_all=False)
 async def get_image(request, user_id, user: User):  # pylint: disable=unused-argument
-    if user.role != UserRole.Admin.value:
-        user_id = str(user.id)
+    #if user.role != UserRole.Admin.value:
+        #user_id = str(user.id)
     image = await loaders.image_query(user_id=int(user_id)).first_or_404()
     return raw(image.image, content_type=image.image_mime_type)

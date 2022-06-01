@@ -39,7 +39,7 @@ async def get_users(request):  # pylint: disable=unused-argument
 @openapi.response(403, {'application/json': AuthErrorSchema}, description='Forbidden')
 @openapi.response(404, {'application/json': ResponseSchema}, description='Not Found')
 @openapi.response(500, {'application/json': ResponseSchema}, description='Internal Server Error')
-@openapi.parameter('user_id', UserSchema.id, 'path', required=True, allowEmptyValue=False)
+#@openapi.parameter('user_id', UserSchema.id, 'path', required=True, allowEmptyValue=False)
 @openapi.body({"application/json": AddUserSchema}, required=True)
 @validate(json=AddUserModel)
 async def add_user(request, body):  # pylint: disable=unused-argument

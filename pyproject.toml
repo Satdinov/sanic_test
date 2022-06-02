@@ -24,6 +24,10 @@ aio-pika = "^8.0.3"
 pyotp = "^2.6.0"
 Pillow = "^9.1.1"
 anyio = "^3.6.1"
+pytest = "^6.2"
+pytest-asyncio = "^0.16"
+psycopg = "^3.0.14"
+
 
 [tool.poetry.dev-dependencies]
 isort = "^5.10"
@@ -31,9 +35,8 @@ prospector = "^1.5"
 pytest = "^6.2"
 pytest-cov = "^3.0"
 pytest-asyncio = "^0.16"
-sanic-testing = "^22.3"
+sanic-testing = "^0.7"
 pytest-postgresql = "^4.0"
-psycopg = "^3.0"
 
 [tool.isort]
 line_length = 120

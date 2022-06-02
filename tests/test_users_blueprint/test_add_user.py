@@ -1,15 +1,17 @@
 import pytest
 from sanic import Sanic
-import asyncio
-from database import User, UserRole
+
+from database import User, UserRole, UserLang
 
 
-async def test_add_user(app: Sanic):
-    _, response = await app.asgi_client.post('/users/add_user',
+@pytest.mark.asyncio
+async def test_add_user_admin(app: Sanic):
+    _, response = await app.asgi_client.post('/users/add_user', 
         json={
-            'email': 'test@test.ru',
-            'password': 'Password1332',
-            'lang': 'RU',
-            'role': UserRole.User.value,
+                'email': 'test@test.com',
+                'password': 'password123Daswq2',
+                'lang': UserLang.EN.value,
+                'role': UserRole.Admin.value
     })
+
     assert response.status == 200

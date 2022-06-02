@@ -72,7 +72,7 @@ tz = ["python-dateutil"]
 name = "anyio"
 version = "3.6.1"
 description = "High level compatibility layer for multiple asynchronous event loop implementations"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.6.2"
 
@@ -1103,7 +1103,7 @@ yaml = ["pyyaml"]
 name = "sniffio"
 version = "1.2.0"
 description = "Sniff out which async library your code is running under"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.5"
 
@@ -1253,7 +1253,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.7.2,<3.11"
-content-hash = "67410909b008d6a3b7d25c172fbb760a54203b4b2fb2bfbc6adf2d58518b8c1c"
+content-hash = "6041a16dfff64d6e015f2c8fcb25591fb404c61e80e696cfc7a8440e818d8ecb"
 
 [metadata.files]
 aio-pika = [

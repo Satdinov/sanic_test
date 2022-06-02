@@ -13,7 +13,7 @@ def users_query(
 ) -> GinoExecutor:
 
     query = User.query
-
+    
     if user_id:
         query = query.where(User.id == user_id)
 
@@ -22,4 +22,5 @@ def users_query(
 
     if lang:
         query = query.where(User.lang == lang)
+
     return query.gino

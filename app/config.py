@@ -7,12 +7,12 @@ project_root = os.path.abspath(os.path.join(app_dir, os.pardir))
 
 class Config:
     APP_NAME: str = app_name
+    # APP_URL_PREFIX: str = '/api'
     PG_CONNECTION: str = None
     REDIS_CONNECTION: str = None
     CORS_AUTOMATIC_OPTIONS: bool = True
     CORS_SUPPORTS_CREDENTIALS: bool = True
     CORS_ORIGINS: str = '.*'
-    APP_URL_PREFIX: str = '/api'
     TESTS: bool = False
     CORS_ALLOW_HEADERS: Tuple[str] = (
         'accept',
@@ -31,7 +31,8 @@ class Config:
     SANIC_JWT_STRICT_SLASHES: bool = True
     SANIC_JWT_PATH_TO_AUTHENTICATE: str = ''
     SANIC_JWT_BLUEPRINT_NAME: str = 'auth'
-    SANIC_JWT_URL_PREFIX: str = f'{APP_URL_PREFIX}/{SANIC_JWT_BLUEPRINT_NAME}'
+    # SANIC_JWT_URL_PREFIX: str = f'{APP_URL_PREFIX}/{SANIC_JWT_BLUEPRINT_NAME}'
+    SANIC_JWT_URL_PREFIX: str = f'{SANIC_JWT_BLUEPRINT_NAME}'
     SANIC_JWT_COOKIE_SET: bool = True
     SANIC_JWT_COOKIE_STRICT: bool = False
     SANIC_JWT_EXPIRATION_DELTA: int = 7 * 24 * 60 * 60

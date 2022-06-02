@@ -3,10 +3,13 @@ from sanic import Sanic
 import asyncio
 from database import User, UserRole
 
-@pytest.mark.asyncio
-async def test_add_user_admin(app: Sanic):
-    _, response = await app.asgi_client.post('users/add_user', json={
-                                                                        'email': 'test@test.ru',
-                                                                        'password': await app.ctx.password_hasher.async_hash('Password1332'),
-                                                                        'role': UserRole.USER.value })
+
+async def test_add_user(app: Sanic):
+    _, response = await app.asgi_client.post('/users/add_user',
+        json={
+            'email': 'test@test.ru',
+            'password': 'Password1332',
+            'lang': 'RU',
+            'role': UserRole.User.value,
+    })
     assert response.status == 200

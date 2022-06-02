@@ -44,6 +44,7 @@ async def get_users(request):  # pylint: disable=unused-argument
 @validate(json=AddUserModel)
 async def add_user(request, body):  # pylint: disable=unused-argument
     body.email = body.email.lower()
+
     user = await loaders.users_query(email=body.email).first()
 
     if user:

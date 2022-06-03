@@ -1,14 +1,14 @@
 from sanic import Blueprint
+from sanic.exceptions import InvalidUsage
 from sanic.response import json
 from sanic_ext import openapi, validate
 from sanic_jwt.decorators import inject_user, protected, scoped
 
-from sanic.exceptions import InvalidUsage
-from database import User, loaders, UserRole
 from app.utils import PasswordHasher
-from app.utils.openapi_models import ResponseSchema, UserSchema, AuthErrorSchema
+from app.utils.openapi_models import AuthErrorSchema, ResponseSchema, UserSchema
+from database import User, UserRole, loaders
 
-from .models import AddUserModel, AddUserSchema, ChangeEmailSchema
+from .models import AddUserModel, AddUserSchema, ChangeEmailModel, ChangeEmailSchema
 
 
 blueprint = Blueprint('users', url_prefix='/users', strict_slashes=True)
@@ -39,7 +39,7 @@ async def get_users(request):  # pylint: disable=unused-argument
 @openapi.response(403, {'application/json': AuthErrorSchema}, description='Forbidden')
 @openapi.response(404, {'application/json': ResponseSchema}, description='Not Found')
 @openapi.response(500, {'application/json': ResponseSchema}, description='Internal Server Error')
-#@openapi.parameter('user_id', UserSchema.id, 'path', required=True, allowEmptyValue=False)
+# @openapi.parameter('user_id', UserSchema.id, 'path', required=True, allowEmptyValue=False)
 @openapi.body({"application/json": AddUserSchema}, required=True)
 @validate(json=AddUserModel)
 async def add_user(request, body):  # pylint: disable=unused-argument
@@ -71,20 +71,20 @@ async def add_user(request, body):  # pylint: disable=unused-argument
 @openapi.response(403, {'application/json': AuthErrorSchema}, description='Forbidden')
 @openapi.response(404, {'application/json': ResponseSchema}, description='Not Found')
 @openapi.response(500, {'application/json': ResponseSchema}, description='Internal Server Error')
-@openapi.body({"application/json": ChangeEmailSchema}, required=True)
+@openapi.body({"application/json": ChangeEmailSchema}, requirusered=True)
 @protected()
 @inject_user()
+@validate(json=ChangeEmailModel)
 @scoped((UserRole.Admin.value, UserRole.User.value,), require_all=False)
-async def change_user(request, user_id, user: User):
+async def change_user(request, user_id, user: User, body):  # pylint: disable=unused-argument
     if user.role != UserRole.Admin.value:
         user_id = str(user.id)
-    form = request.form
     user = await loaders.users_query(user_id=int(user_id)).first_or_404()
-    await user.update(email=form['email'][0]).apply()
+    await user.update(email=body.email).apply()
     return json(user.to_dict())
 
 
-#@blueprint.delete("/delete_user/<user_id>")
+# @blueprint.delete("/delete_user/<user_id>")
 @blueprint.delete("/delete_user/<user_id:int>")
 @openapi.summary("Delete user")
 @openapi.description("Delete user from database")

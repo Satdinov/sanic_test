@@ -1,9 +1,11 @@
-from typing import Tuple
 import os
+from typing import Tuple
+
 
 app_name = 'sanic_test'
 app_dir = os.path.abspath(os.path.dirname(__file__))
 project_root = os.path.abspath(os.path.join(app_dir, os.pardir))
+
 
 class Config:
     APP_NAME: str = app_name

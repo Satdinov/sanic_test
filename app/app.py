@@ -2,11 +2,10 @@ import aio_pika
 import aioredis
 from sanic import Blueprint, Sanic
 
-from . import blueprints
-from database import db
 from app.utils import jwt, password_hasher
+from database import db
 
-from . import config
+from . import blueprints, config
 
 
 def register_jwt(app: Sanic):
@@ -30,12 +29,7 @@ def register_redis(app: Sanic):
     app.register_listener(create_redis_connection, 'before_server_start')
     app.register_listener(close_redis_connection, 'before_server_stop')
 
-''''
-app = Sanic(Config.APP_NAME)
 
-app.config.load(Config)
-app.config.load_environment_vars()
-'''
 def create_app(config_object: object = config.Config, need_register_extensions: bool = True) -> Sanic:
     app = Sanic(config_object.APP_NAME)
     app.config.load(config_object)
@@ -44,6 +38,7 @@ def create_app(config_object: object = config.Config, need_register_extensions: 
         register_extensions(app)
     register_blueprints(app)
     return app
+
 
 def register_db(app: Sanic):
     app.config.DB_DSN = app.config.PG_CONNECTION
@@ -66,10 +61,10 @@ def register_extensions(app: Sanic):
     register_db(app)
     register_rabbitmq(app)
 
-def register_rabbitmq(app: Sanic):
 
+def register_rabbitmq(app: Sanic):
     async def create_amqp_connection(app: Sanic, _):
         app.ctx.amqp = await aio_pika.connect_robust(app.config.AMQP_CONNECTION)
         app.ctx.amqp_channel = await app.ctx.amqp.channel()
-    
+
     app.register_listener(create_amqp_connection, 'before_server_start')

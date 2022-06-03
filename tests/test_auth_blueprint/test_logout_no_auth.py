@@ -1,7 +1,10 @@
+import asyncio
+
 import pytest
 from sanic import Sanic
-import asyncio
+
 from database import User, UserRole
+
 
 @pytest.mark.asyncio
 async def test_logout_no_auth(app: Sanic):

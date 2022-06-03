@@ -1,6 +1,6 @@
 from typing import Optional
 
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, EmailStr, validator
 from sanic_ext import openapi
 
 from database import UserLang, UserRole
@@ -16,9 +16,14 @@ class AddUserSchema:
 class ChangeEmailSchema:
     email = openapi.String(description='New user email')
 
+    @validator('email')
+
+    def check_email(cls, value):  # noqa
+        return value.lower()
+
 
 class AddUserModel(BaseModel):
-    email: str
+    email: EmailStr
     password: str
     lang: Optional[UserLang]
     role: Optional[UserRole]
@@ -34,3 +39,12 @@ class AddUserModel(BaseModel):
         if not any(map(str.isdigit, value)):
             raise ValueError('password does not contain a digit')
         return value
+
+
+class ChangeEmailModel(BaseModel):
+    email: EmailStr
+
+    @validator('email')
+
+    def check_email(cls, value):  # noqa
+        return value.lower()

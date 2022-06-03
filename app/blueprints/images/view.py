@@ -1,16 +1,12 @@
-from json import dumps
+from aio_pika import ExchangeType
 from sanic import Blueprint, Sanic
 from sanic.response import json, raw
 from sanic_ext import openapi
 from sanic_jwt.decorators import inject_user, protected, scoped
 
-import aio_pika
-import pyotp
-from aio_pika import ExchangeType
+from app.utils.openapi_models import AuthErrorSchema, ResponseSchema, UserSchema
+from database import Image, User, UserRole, loaders
 
-from database import User, Image, loaders, UserRole
-from app.utils.openapi_models import ResponseSchema, AuthErrorSchema, UserSchema
-from database.loaders.images_loaders import image_query
 from .models import AddImageSchema
 
 
@@ -31,22 +27,14 @@ blueprint = Blueprint('images', url_prefix='/images', strict_slashes=True)
 @inject_user()
 @scoped((UserRole.Admin.value, UserRole.User.value,), require_all=False)
 async def add_image(request, user_id, user: User):
-    #breakpoint()
-    #if user.role is not UserRole.Admin.value:
-        #user_id = str(user.id)
+    #  if user.role is not UserRole.Admin.value:
+    #  user_id = str(user.id)
     user = await loaders.users_query(user_id=int(user_id)).first_or_404()
     image = await loaders.image_query(user_id=user.id).first()
     file = request.files['image'][0]
 
-    image_data = {"image_bytes": image.image}
-
-    await request.app.ctx.image_exchange.publish(
-        aio_pika.Message(body=image.image),
-        routing_key=request.app.config.IMAGE_EXCHANGE,
-    )
-
     if not image:
-        await Image.create(
+        imaged = await Image.create(
             user_id=int(user_id),
             image=file.body,
             image_mime_type=file.type)
@@ -57,8 +45,13 @@ async def add_image(request, user_id, user: User):
             image_mime_type=file.type
         ).apply()
 
-    return json({'status': 200})
+    '''
+    await request.app.ctx.image_exchange.publish(
+        aio_pika.Message(body=image.image),
+        routing_key=request.app.config.IMAGE_EXCHANGE,)
+    '''
 
+    return json({'status': 200})
 
 
 @blueprint.get("/get_image/<user_id>")
@@ -74,10 +67,11 @@ async def add_image(request, user_id, user: User):
 @inject_user()
 @scoped((UserRole.Admin.value, UserRole.User.value,), require_all=False)
 async def get_image(request, user_id, user: User):  # pylint: disable=unused-argument
-    #if user.role != UserRole.Admin.value:
-        #user_id = str(user.id)
+    #  if user.role != UserRole.Admin.value:
+    #  user_id = str(user.id)
     image = await loaders.image_query(user_id=int(user_id)).first_or_404()
     return raw(image.image, content_type=image.image_mime_type)
+
 
 @blueprint.after_server_start
 async def create_images_exchange(app: Sanic, _):

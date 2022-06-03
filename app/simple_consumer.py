@@ -1,16 +1,16 @@
 import asyncio
-from aio_pika import ExchangeType
-import aio_pika
-import PIL
-from PIL import Image
-import os
 import io
+
+import aio_pika
+from aio_pika import ExchangeType
+from PIL import Image
+
 
 async def process_message(
     message: aio_pika.abc.AbstractIncomingMessage,
 ) -> None:
     async with message.process():
-        #print(message.body)
+        # print(message.body)
         image = Image.open(io.BytesIO(message.body))
         image.save('image.png')
         await asyncio.sleep(1)
@@ -21,18 +21,18 @@ async def main() -> None:
         "amqp://guest:guest@127.0.0.1/",
     )
 
-    queue_name = "IMAGE_EXCHANGE"  # Твое название exchange 
+    queue_name = "IMAGE_EXCHANGE"  # Твое название exchange
 
     # Creating channel
     channel = await connection.channel()
 
     # Declaring queue
     input_exchange = await channel.declare_exchange(
-        name=queue_name,  # Твое название exchange 
+        name=queue_name,  # Твое название exchange
         type=ExchangeType.FANOUT,
         durable=True
     )
-        
+
     output_queue = await channel.declare_queue(
         name=queue_name,  # Твое название exchange
         durable=True

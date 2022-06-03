@@ -13,7 +13,7 @@ def users_query(
 ) -> GinoExecutor:
 
     query = User.query
-    
+
     if user_id:
         query = query.where(User.id == user_id)
 

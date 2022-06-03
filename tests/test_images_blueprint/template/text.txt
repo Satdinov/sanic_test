@@ -1,0 +1,47 @@
+1. Зайти в venv
+python3 -m venv .venv
+source .venv/bin/activate
+ 
+2. Прокинуть экспорты
+export PG_CONNECTION=postgresql://postgres:@0.0.0.0:5432/sanic_test
+export SANIC_PG_CONNECTION=postgresql://postgres:@0.0.0.0:5432/sanic_test
+export REDIS_CONNECTION=redis://127.0.0.1/0
+export SANIC_REDIS_CONNECTION=redis://127.0.0.1/0
+export SANIC_AMPQ_CONNECTION=redis://127.0.0.1/0
+
+sanic app.app
+sudo -i -u postgres
+psql sanic_test
+
+Миграция БД:
+alembic revision --autogenerate
+alembic upgrade head
+
+2. @protected() - там, где работает только после авторизации
+3. @scoped((UserRole.Admin.value, ), require_all=False) - там, где будет работать только у нужной роли (Admin)
+rustam@rustam.ru
+Rustam123456
+
+------------------
+for pytest:
+export SANIC_PG_CONNECTION=postgresql://postgres:@0.0.0.0:5432/sanic_test_test
+export SANIC_PG_VERSION=12
+export SANIC_REDIS_CONNECTION=redis://127.0.0.1/0
+pytest
+------------------
+
+------------------
+for pytest (old)
+export SANIC_PG_VERSION=12
+export SANIC_REDIS_CONNECTION=redis://127.0.0.1/0
+export SANIC_AMPQ_CONNECTION=redis://127.0.0.1/0
+export SANIC_PG_CONNECTION=postgresql://postgres:@0.0.0.0:5432/sanic_test_test
+------------------
+
+export SANIC_PG_CONNECTION=postgresql://sanic_test:@0.0.0.0:5432/sanic_test_test
+
+
+export SANIC_PG_CONNECTION=postgresql://postgres:@0.0.0.0/project_test
+export PG_CONNECTION=postgresql://postgres:@0.0.0.0/project_test
+
+export SANIC_AMQP_CONNECTION=amqp://guest:guest@127.0.0.1/

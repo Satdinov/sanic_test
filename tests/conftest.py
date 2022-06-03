@@ -1,10 +1,10 @@
+import asyncio
 import os
 from decimal import Decimal
 from typing import Tuple
 
 import aioredis
 import pytest
-import asyncio
 from alembic.command import upgrade as alembic_upgrade
 from alembic.config import Config as AlembicConfig
 from gino import Gino
@@ -13,10 +13,9 @@ from sanic import Sanic
 from sanic_testing import TestManager
 from sqlalchemy.engine.url import make_url
 
-from app.app import create_app
+from app.app import create_app, register_jwt, register_password_hasher
 from app.config import Config
-from app.app import register_jwt, register_password_hasher
-from database import User, UserLang, UserRole, db
+from database import Image, User, UserLang, UserRole, db
 
 
 @pytest.fixture
@@ -104,7 +103,7 @@ def invalid_emails() -> Tuple[str]:
 
 @pytest.fixture
 def invalid_passwords() -> Tuple[str]:
-    return ('invalid', '1234', 1234, True, False, None)
+    return ('invalidpass', '1234', 1234, True, False)
 
 
 @pytest.fixture
@@ -134,6 +133,18 @@ async def admin(app: Sanic, database: Gino, password: str, hashed_password: str)
     yield user
 
     await user.delete()
+
+@pytest.fixture
+async def user_image(app: Sanic, database: Gino) -> Image:
+    async with app.ctx.db.transaction():
+        image = await Image.create(
+            id = 1,
+            user_id = 1,
+            image=b'image',
+            image_mime_type='image/png'
+        )
+    yield image
+    await image.delete()
 
 '''
 @pytest.fixture

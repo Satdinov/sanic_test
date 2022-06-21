@@ -5,7 +5,7 @@ from sanic import Blueprint, Sanic
 from app.utils import jwt, password_hasher
 from database import db
 
-from . import blueprints, config
+from . import config
 
 
 def register_jwt(app: Sanic):
@@ -36,7 +36,7 @@ def create_app(config_object: object = config.Config, need_register_extensions: 
     app.config.load_environment_vars()
     if need_register_extensions:
         register_extensions(app)
-    register_blueprints(app)
+    # register_blueprints(app)
     return app
 
 
@@ -46,21 +46,11 @@ def register_db(app: Sanic):
     app.ctx.db = db
 
 
-def register_blueprints(app: Sanic):
-    app.blueprint(Blueprint.group(
-        blueprints.images.blueprint,
-        blueprints.users.blueprint,
-    ))
-
-
-def register_extensions(app: Sanic):
-    register_jwt(app)
-    register_password_hasher(app)
-    register_redis(app)
-    register_blueprints(app)
-    register_db(app)
-    register_rabbitmq(app)
-
+# def register_blueprints(app: Sanic):
+#     app.blueprint(Blueprint.group(
+#         blueprints.images.blueprint,
+#         blueprints.users.blueprint,
+#     ))
 
 def register_rabbitmq(app: Sanic):
     async def create_amqp_connection(app: Sanic, _):
@@ -68,3 +58,11 @@ def register_rabbitmq(app: Sanic):
         app.ctx.amqp_channel = await app.ctx.amqp.channel()
 
     app.register_listener(create_amqp_connection, 'before_server_start')
+
+def register_extensions(app: Sanic):
+    register_jwt(app)
+    register_password_hasher(app)
+    register_redis(app)
+    # register_blueprints(app)
+    register_db(app)
+    #register_rabbitmq(app)

@@ -11,7 +11,7 @@ from sanic_jwt.endpoints import (
 )
 from sentry_sdk import configure_scope
 
-from database import User, loaders
+from database import User
 
 from .openapi_models import (
     AccessTokenSchema, AuthErrorSchema, AuthModel, AuthSchema, AuthTokensSchema, AuthVerifySchema, CurrentUserSchema,

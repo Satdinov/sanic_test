@@ -12,6 +12,7 @@ class Config:
     # APP_URL_PREFIX: str = '/api'
     PG_CONNECTION: str = None
     REDIS_CONNECTION: str = None
+    AMQP_CONNECTION: str = None
     CORS_AUTOMATIC_OPTIONS: bool = True
     CORS_SUPPORTS_CREDENTIALS: bool = True
     CORS_ORIGINS: str = '.*'

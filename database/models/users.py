@@ -3,29 +3,22 @@ from enum import Enum
 from sqlalchemy.dialects.postgresql import ENUM
 
 from .db import db
-
-
-class UserLang(Enum):
-    EN = 'EN'
-    RU = 'RU'
-
+from .base_model import BaseModel
 
 class UserRole(Enum):
     Admin = 'Admin'
     User = 'User'
 
+class UserSubject(Enum):
+    FizFace = 'Fiz'
+    UrFace = 'Ur'
 
-class User(db.Model):
+class User(BaseModel):
     __tablename__ = 'users'
-    __hiden_keys__ = ('image', 'password', 'image_mime_type')
-    id = db.Column(db.Integer(), primary_key=True)
-    email = db.Column(db.String(), nullable=False)
+    __hiden_keys__ = ('password')
     password = db.Column(db.String(), nullable=False)
-    lang = db.Column(
-        ENUM(UserLang, name='user_langs'),
-        nullable=False, index=True, default=UserLang.EN,
-        server_default=UserLang.EN.value,
-        comment='User lang')
+    tel = db.Column(db.String(), nullable=False)
+
     role = db.Column(
         ENUM(UserRole,
         name='user_roles'),
@@ -33,3 +26,10 @@ class User(db.Model):
         index=True, default=UserRole.User,
         server_default=UserRole.User.value,
         comment='User roles')
+
+    subject = db.Column(
+        ENUM(UserSubject,
+        name='user_subject'),
+        index=True, default=UserSubject.FizFace,
+        server_default=UserSubject.FizFace.value,
+        comment='User subject')
